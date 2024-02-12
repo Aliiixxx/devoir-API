@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Détails du Catway</title>
+    <script>
+      function loadCatwayDetails() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const catwayId = urlParams.get("id");
+        fetch(`/api/catways/${catwayId}`, {
+          method: "GET",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById(
+              "catwayDetails"
+            ).textContent = `Catway ${data.catwayNumber}: ${data.type} - ${data.catwayState}`;
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+    </script>
+  </head>
+  <body onload="loadCatwayDetails()">
+    <h1>Détails du Catway</h1>
+    <p id="catwayDetails"></p>
+  </body>
+</html>

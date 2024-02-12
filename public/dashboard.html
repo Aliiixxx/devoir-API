@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tableau de Bord</title>
+    <script>
+      function createUser(event) {
+        event.preventDefault();
+        const name = document.getElementById("userName").value;
+        const email = document.getElementById("userEmail").value;
+        const password = document.getElementById("userPassword").value;
+
+        fetch("/api/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, email, password }),
+        })
+          .then((response) => {
+            if (
+              response.headers.get("Content-Type").includes("application/json")
+            ) {
+              return response.json();
+            } else {
+              return response.text();
+            }
+          })
+          .then((data) => {
+            console.log(data);
+            alert("Utilisateur créé avec succès");
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+
+      function updateUser(event) {
+        event.preventDefault();
+        const userId = document.getElementById("userIdToUpdate").value;
+        const name = document.getElementById("updateUserName").value;
+        const email = document.getElementById("updateUserEmail").value;
+        const password = document.getElementById("updateUserPassword").value;
+        const token = localStorage.getItem("token");
+
+        const updateData = { name, email };
+        if (password) updateData.password = password;
+
+        fetch(`/api/auth/users/${userId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updateData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            alert("Utilisateur modifié avec succès");
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+
+      function deleteUser(event) {
+        event.preventDefault();
+        const userId = document.getElementById("userIdToDelete").value;
+        const token = localStorage.getItem("token");
+
+        fetch(`/api/auth/users/${userId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert("Utilisateur supprimé avec succès");
+            } else {
+              alert("Erreur lors de la suppression de l'utilisateur");
+            }
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+
+      function createCatway(event) {
+        event.preventDefault();
+        const catwayNumber = document.getElementById("catwayNumber").value;
+        const type = document.getElementById("catwayType").value;
+        const catwayState = document.getElementById("catwayState").value;
+        const token = localStorage.getItem("token");
+
+        fetch("/api/catways/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ catwayNumber, type, catwayState }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            alert("Catway créé avec succès");
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+      function updateCatway(event) {
+        event.preventDefault();
+        const catwayId = document.getElementById("catwayIdToUpdate").value;
+        const catwayState = document.getElementById("newCatwayState").value;
+        const token = localStorage.getItem("token");
+
+        fetch(`/api/catways/${catwayId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ catwayState }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            alert("Catway mis à jour avec succès");
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+      function deleteCatway(event) {
+        event.preventDefault();
+        const catwayId = document.getElementById("catwayIdToDelete").value;
+        const token = localStorage.getItem("token");
+
+        fetch(`/api/catways/${catwayId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert("Catway supprimé avec succès");
+            } else {
+              alert("Erreur lors de la suppression du catway");
+            }
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+      function getCatwayDetails(event) {
+        event.preventDefault();
+        const catwayId = document.getElementById("catwayIdToDisplay").value;
+
+        fetch(`/api/catways/${catwayId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            alert(`Détails du Catway: ${JSON.stringify(data)}`);
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+      function createReservation(event) {
+        event.preventDefault();
+        const catwayNumber = document.getElementById(
+          "catwayNumberReservation"
+        ).value;
+        const clientName = document.getElementById("clientName").value;
+        const boatName = document.getElementById("boatName").value;
+        const checkInDate = document.getElementById("checkInDate").value;
+        const checkOutDate = document.getElementById("checkOutDate").value;
+        const token = localStorage.getItem("token");
+
+        fetch(`/api/catways/byNumber/${catwayNumber}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((catwayData) => {
+            if (!catwayData || !catwayData._id) {
+              throw new Error("Catway not found");
+            }
+            return catwayData._id;
+          })
+          .then((catwayId) => {
+            return fetch(`/api/reservations/catways/${catwayId}/reservations`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                clientName,
+                boatName,
+                checkIn: checkInDate,
+                checkOut: checkOutDate,
+              }),
+            });
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            alert("Réservation enregistrée avec succès");
+          })
+          .catch((error) => {
+            console.error("Erreur:", error);
+            alert(error.message);
+          });
+      }
+
+      function deleteReservation(event) {
+        event.preventDefault();
+        const reservationId = document.getElementById(
+          "reservationIdToDelete"
+        ).value;
+        const token = localStorage.getItem("token");
+
+        fetch(`/api/reservations/${reservationId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert("Réservation supprimée avec succès");
+            } else {
+              alert("Erreur lors de la suppression de la réservation");
+            }
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+
+      function getReservationDetails(event) {
+        event.preventDefault();
+        const reservationId = document.getElementById(
+          "reservationIdToDisplay"
+        ).value;
+
+        fetch(`/api/reservations/${reservationId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            alert(`Détails de la réservation: ${JSON.stringify(data)}`);
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+
+      function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "/index.html";
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Tableau de Bord</h1>
+
+    <h2>Créer un utilisateur</h2>
+    <form onsubmit="createUser(event)">
+      <input type="text" id="userName" placeholder="Nom" required />
+      <input type="email" id="userEmail" placeholder="Email" required />
+      <input
+        type="password"
+        id="userPassword"
+        placeholder="Mot de passe"
+        required
+      />
+      <button type="submit">Créer</button>
+    </form>
+
+    <h2>Modifier un utilisateur</h2>
+    <form onsubmit="updateUser(event)">
+      <input
+        type="text"
+        id="userIdToUpdate"
+        placeholder="ID de l'utilisateur à modifier"
+        required
+      />
+      <input
+        type="text"
+        id="updateUserName"
+        placeholder="Nouveau nom"
+        required
+      />
+      <input
+        type="email"
+        id="updateUserEmail"
+        placeholder="Nouvel email"
+        required
+      />
+      <input
+        type="password"
+        id="updateUserPassword"
+        placeholder="Nouveau mot de passe"
+      />
+      <button type="submit">Modifier</button>
+    </form>
+
+    <h2>Supprimer un utilisateur</h2>
+    <form onsubmit="deleteUser(event)">
+      <input
+        type="text"
+        id="userIdToDelete"
+        placeholder="ID de l'utilisateur à supprimer"
+        required
+      />
+      <button type="submit">Supprimer</button>
+    </form>
+
+    <h2>Créer un catway</h2>
+    <form onsubmit="createCatway(event)">
+      <input
+        type="number"
+        id="catwayNumber"
+        placeholder="Numéro de pont"
+        required
+      />
+      <select id="catwayType" required>
+        <option value="long">Long</option>
+        <option value="short">Court</option>
+      </select>
+      <input
+        type="text"
+        id="catwayState"
+        placeholder="Description de l'état"
+        required
+      />
+      <button type="submit">Créer</button>
+    </form>
+
+    <h2>Modifier la description d'un catway</h2>
+    <form onsubmit="updateCatway(event)">
+      <input
+        type="text"
+        id="catwayIdToUpdate"
+        placeholder="ID du catway à modifier"
+        required
+      />
+      <input
+        type="text"
+        id="newCatwayState"
+        placeholder="Nouvelle description de l'état"
+        required
+      />
+      <button type="submit">Modifier</button>
+    </form>
+
+    <h2>Supprimer un catway</h2>
+    <form onsubmit="deleteCatway(event)">
+      <input
+        type="text"
+        id="catwayIdToDelete"
+        placeholder="ID du catway à supprimer"
+        required
+      />
+      <button type="submit">Supprimer</button>
+    </form>
+
+    <h2>Afficher les détails d'un catway</h2>
+    <form onsubmit="getCatwayDetails(event)">
+      <input
+        type="text"
+        id="catwayIdToDisplay"
+        placeholder="ID du catway à afficher"
+        required
+      />
+      <button type="submit">Afficher</button>
+    </form>
+
+    <h2>Enregistrer une réservation</h2>
+    <form onsubmit="createReservation(event)">
+      <input
+        type="text"
+        id="catwayNumberReservation"
+        placeholder="Numéro de pont"
+        required
+      />
+      <input type="text" id="clientName" placeholder="Nom du client" required />
+      <input type="text" id="boatName" placeholder="Nom du bâteau" required />
+      <input
+        type="date"
+        id="checkInDate"
+        placeholder="Date de début"
+        required
+      />
+      <input type="date" id="checkOutDate" placeholder="Date de fin" required />
+      <button type="submit">Enregistrer</button>
+    </form>
+
+    <h2>Afficher les détails d'une réservation</h2>
+    <form onsubmit="getReservationDetails(event)">
+      <input
+        type="text"
+        id="reservationIdToDisplay"
+        placeholder="ID de la réservation à afficher"
+        required
+      />
+      <button type="submit">Afficher</button>
+    </form>
+
+    <h2>Supprimer une réservation</h2>
+    <form onsubmit="deleteReservation(event)">
+      <input
+        type="text"
+        id="reservationIdToDelete"
+        placeholder="ID de la réservation à supprimer"
+        required
+      />
+      <button type="submit">Supprimer</button>
+    </form>
+
+    <h2>Accéder à la liste des catways et des réservations</h2>
+    <a href="catways.html">Liste des catways</a><br />
+    <a href="reservations.html">Liste des réservations</a>
+
+    <h2>Se déconnecter</h2>
+    <button onclick="logout()">Déconnexion</button>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liste des Catways</title>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("token");
+        fetch("/api/catways", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const list = document.getElementById("catwayList");
+            data.forEach((catway) => {
+              const item = document.createElement("li");
+              item.textContent = `Catway ${catway.catwayNumber} `;
+
+              const detailButton = document.createElement("button");
+              detailButton.textContent = "Détails";
+              detailButton.onclick = function () {
+                window.location.href = `/detail-catway.html?id=${catway._id}`;
+              };
+
+              item.appendChild(detailButton);
+
+              list.appendChild(item);
+            });
+          })
+          .catch((error) => console.error("Erreur:", error));
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Liste des Catways</h1>
+    <ul id="catwayList"></ul>
+  </body>
+</html>

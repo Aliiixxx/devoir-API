@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accueil - Gestion de Catways</title>
+    <script>
+      function loginUser(event) {
+        event.preventDefault();
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        fetch("/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.token) {
+              localStorage.setItem("token", data.token);
+              window.location.href = "/dashboard.html";
+            } else {
+              alert("Échec de la connexion");
+            }
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Bienvenue sur l'application de gestion de catways</h1>
+    <p>
+      Cette application permet de gérer les réservations de catways pour le port
+      de plaisance de Russell.
+    </p>
+    <a href="documentation.html">Documentation de l'API</a>
+    <h2>Connexion</h2>
+    <form id="loginForm" onsubmit="loginUser(event)">
+      <input type="email" id="loginEmail" placeholder="Email" required />
+      <input
+        type="password"
+        id="loginPassword"
+        placeholder="Mot de passe"
+        required
+      />
+      <button type="submit">Se connecter</button>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Détails de la Réservation</title>
+    <script>
+      function loadReservationDetails() {
+        const token = localStorage.getItem("token");
+        const urlParams = new URLSearchParams(window.location.search);
+        const reservationId = urlParams.get("id");
+        fetch(`/api/reservations/${reservationId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Réponse réseau non ok.");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            document.getElementById(
+              "reservationDetails"
+            ).textContent = `Réservation pour ${data.clientName},Nom du bâteau ${data.boatName}, Id du Pont : ${data.catway}, du ${data.checkIn} au ${data.checkOut}`;
+          })
+          .catch((error) => console.error("Erreur:", error));
+      }
+    </script>
+  </head>
+  <body onload="loadReservationDetails()">
+    <h1>Détails de la Réservation</h1>
+    <p id="reservationDetails"></p>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liste des Réservations</title>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("token");
+        fetch("/api/reservations", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const list = document.getElementById("reservationList");
+            data.forEach((reservation) => {
+              const item = document.createElement("li");
+              const detailButton = document.createElement("button");
+              detailButton.textContent = "Détails";
+              detailButton.onclick = function () {
+                window.location.href = `detail-reservation.html?id=${reservation._id}`;
+              };
+              item.textContent = `Réservation pour ${
+                reservation.clientName
+              }, du ${new Date(
+                reservation.checkIn
+              ).toLocaleDateString()} au ${new Date(
+                reservation.checkOut
+              ).toLocaleDateString()} `;
+              item.appendChild(detailButton);
+              list.appendChild(item);
+            });
+          })
+          .catch((error) => console.error("Erreur:", error));
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Liste des Réservations</h1>
+    <ul id="reservationList"></ul>
+  </body>
+</html>
