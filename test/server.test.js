@@ -13,10 +13,18 @@ afterEach(async function () {
 
 describe("GET /api/reservations", function () {
   it("doit récupérer toutes les réservations", async function () {
+    const token = jwt.sign(
+      { userId: "65c64ea45574a6e69aef1c13" },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
     const chai = await chaiPromise;
     const expect = (await chai).expect;
 
-    const res = await request(app).get("/api/reservations");
+    const res = await request(app)
+      .get("/api/reservations")
+      .set("Authorization", `Bearer ${token}`);
 
     expect(res.statusCode).to.equal(200);
     expect(res.body).to.be.an("array");
@@ -43,17 +51,5 @@ describe("POST /api/catways", function () {
         type: "long",
       });
     expect(res.statusCode).to.equal(201);
-  });
-});
-
-describe("GET /api/reservations", function () {
-  it("doit récupérer toutes les réservations", async function () {
-    const chai = await chaiPromise;
-    const expect = (await chai).expect;
-
-    const res = await request(app).get("/api/reservations");
-
-    expect(res.statusCode).to.equal(200);
-    expect(res.body).to.be.an("array");
   });
 });
