@@ -7,7 +7,7 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const token = localStorage.getItem("token");
-        fetch("/api/reservations", {
+        fetch("http://localhost:3000/api/reservations", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

@@ -9,7 +9,7 @@
         const token = localStorage.getItem("token");
         const urlParams = new URLSearchParams(window.location.search);
         const reservationId = urlParams.get("id");
-        fetch(`/api/reservations/${reservationId}`, {
+        fetch(`http://localhost:3000/api/reservations/${reservationId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

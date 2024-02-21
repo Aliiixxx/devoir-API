@@ -7,7 +7,7 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const token = localStorage.getItem("token");
-        fetch("/api/catways", {
+        fetch("http://localhost:3000/api/catways", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

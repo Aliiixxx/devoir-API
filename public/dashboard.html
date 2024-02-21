@@ -11,7 +11,7 @@
         const email = document.getElementById("userEmail").value;
         const password = document.getElementById("userPassword").value;
 
-        fetch("/api/auth/register", {
+        fetch("http://localhost:3000/api/auth/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -45,7 +45,7 @@
         const updateData = { name, email };
         if (password) updateData.password = password;
 
-        fetch(`/api/auth/users/${userId}`, {
+        fetch(`http://localhost:3000/api/auth/users/${userId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -66,7 +66,7 @@
         const userId = document.getElementById("userIdToDelete").value;
         const token = localStorage.getItem("token");
 
-        fetch(`/api/auth/users/${userId}`, {
+        fetch(`http://localhost:3000/api/auth/users/${userId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -89,7 +89,7 @@
         const catwayState = document.getElementById("catwayState").value;
         const token = localStorage.getItem("token");
 
-        fetch("/api/catways/", {
+        fetch("http://localhost:3000/api/catways/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -110,7 +110,7 @@
         const catwayState = document.getElementById("newCatwayState").value;
         const token = localStorage.getItem("token");
 
-        fetch(`/api/catways/${catwayId}`, {
+        fetch(`http://localhost:3000/api/catways/${catwayId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -130,7 +130,7 @@
         const catwayId = document.getElementById("catwayIdToDelete").value;
         const token = localStorage.getItem("token");
 
-        fetch(`/api/catways/${catwayId}`, {
+        fetch(`http://localhost:3000/api/catways/${catwayId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -148,10 +148,12 @@
       function getCatwayDetails(event) {
         event.preventDefault();
         const catwayId = document.getElementById("catwayIdToDisplay").value;
+        const token = localStorage.getItem("token");
 
-        fetch(`/api/catways/${catwayId}`, {
+        fetch(`http://localhost:3000/api/catways/${catwayId}`, {
           method: "GET",
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         })
@@ -173,7 +175,7 @@
         const checkOutDate = document.getElementById("checkOutDate").value;
         const token = localStorage.getItem("token");
 
-        fetch(`/api/catways/byNumber/${catwayNumber}`, {
+        fetch(`http://localhost:3000/api/catways/byNumber/${catwayNumber}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -188,7 +190,7 @@
             return catwayData._id;
           })
           .then((catwayId) => {
-            return fetch(`/api/reservations/catways/${catwayId}/reservations`, {
+            return fetch(`http://localhost:3000/api/reservations/catways/${catwayId}/reservations`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -220,7 +222,7 @@
         ).value;
         const token = localStorage.getItem("token");
 
-        fetch(`/api/reservations/${reservationId}`, {
+        fetch(`http://localhost:3000/api/reservations/${reservationId}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -242,10 +244,12 @@
         const reservationId = document.getElementById(
           "reservationIdToDisplay"
         ).value;
+        const token = localStorage.getItem("token");
 
-        fetch(`/api/reservations/${reservationId}`, {
+        fetch(`http://localhost:3000/api/reservations/${reservationId}`, {
           method: "GET",
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         })
