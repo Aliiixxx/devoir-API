@@ -6,10 +6,15 @@
     <title>Détails du Catway</title>
     <script>
       function loadCatwayDetails() {
+        const token = localStorage.getItem("token");
         const urlParams = new URLSearchParams(window.location.search);
         const catwayId = urlParams.get("id");
         fetch(`http://localhost:3000/api/catways/${catwayId}`, {
           method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         })
           .then((response) => response.json())
           .then((data) => {
